@@ -1,0 +1,76 @@
+import customtkinter as ctk
+from tkinter import ttk
+import mysql.connector
+
+# Set UI Theme
+ctk.set_appearance_mode("dark")  # Options: "dark" / "light"
+ctk.set_default_color_theme("blue")  # Options: "blue", "green", "dark-blue"
+
+# Database Connection
+def connect_db():
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",        # <-- change if you set password
+        password="naruto",   # <-- put your MySQL password here
+        database="smart_city"
+    )
+
+# Update table data
+def update_table(rows):
+    for item in table.get_children():
+        table.delete(item)
+    for row in rows:
+        table.insert("", "end", values=row)
+
+def show_citizens():
+    db = connect_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM Citizen")
+    update_table(cursor.fetchall())
+
+def show_traffic():
+    db = connect_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM Traffic_Sensor")
+    update_table(cursor.fetchall())
+
+def show_waste():
+    db = connect_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM Waste_Management")
+    update_table(cursor.fetchall())
+
+# Main Window
+app = ctk.CTk()
+app.title("Smart City Distributed DBMS System")
+app.geometry("900x500")
+
+# Title Label
+title = ctk.CTkLabel(app, text="Smart City Management Dashboard", font=("Arial", 26, "bold"))
+title.pack(pady=20)
+
+# Button Frame
+btn_frame = ctk.CTkFrame(app, fg_color="transparent")
+btn_frame.pack(pady=10)
+
+btn1 = ctk.CTkButton(btn_frame, text="Citizen Data", width=180, command=show_citizens)
+btn2 = ctk.CTkButton(btn_frame, text="Traffic Data", width=180, command=show_traffic)
+btn3 = ctk.CTkButton(btn_frame, text="Waste Data", width=180, command=show_waste)
+
+btn1.grid(row=0, column=0, padx=10, pady=5)
+btn2.grid(row=0, column=1, padx=10, pady=5)
+btn3.grid(row=0, column=2, padx=10, pady=5)
+
+# Table
+style = ttk.Style()
+style.theme_use("default")
+style.configure("Treeview", background="#262626", foreground="white", rowheight=28, fieldbackground="#262626")
+style.map("Treeview", background=[("selected", "#1f6aa5")])
+
+table = ttk.Treeview(app, columns=(1,2,3,4,5), show="headings")
+table.pack(fill="both", expand=True, padx=20, pady=20)
+
+for col in (1,2,3,4,5):
+    table.heading(col, text=f"Column {col}")
+
+app.mainloop()
