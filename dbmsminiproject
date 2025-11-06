@@ -11,7 +11,7 @@ def connect_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",        # <-- change if you set password
-        password="naruto",   # <-- put your MySQL password here
+        password="xxxxxx",   # <-- put your MySQL password here
         database="smart_city"
     )
 
@@ -74,3 +74,4 @@ for col in (1,2,3,4,5):
     table.heading(col, text=f"Column {col}")
 
 app.mainloop()
+
